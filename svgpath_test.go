@@ -505,6 +505,97 @@ func TestUnarc(t *testing.T) {
 	*/
 }
 
+func TestUncubic(t *testing.T) {
+	sp, err := NewSvgPath("M100,100 c10,10 50,0 10,-10")
+	assert.Nil(t, err)
+	sp.Uncubic()
+	sp.Round(0)
+	assert.Equal(t, "M100 100Q100 100 102 102 105 103 105 103 109 105 114 106 114 106 118 107 124 107 124 107 129 108 135 108 135 108 141 108 146 107 146 107 152 107 156 106 156 106 161 105 165 103 165 103 168 102 170 100", sp.ToString(), "convert cubic to quadratic")
+
+	/*
+	   describe('unarc', function () {
+	     it('', function () {
+	       assert.equal(
+	         svgpath('').unarc().round(0).toString(),
+	         ''
+	       );
+	     });
+
+	     it('small arc gets expanded to one curve', function () {
+	       assert.equal(
+	         svgpath('M100 100 a30 50 0 0 1 30 30').unarc().round(0).toString(),
+	         'M100 100C113 98 125 110 130 130'
+	       );
+	     });
+
+	     it('unarc a circle', function () {
+	       assert.equal(
+	         svgpath('M 100, 100 m -75, 0 a 75,75 0 1,0 150,0 a 75,75 0 1,0 -150,0').unarc().round(0).toString(),
+	         'M100 100m-75 0C25 141 59 175 100 175 141 175 175 141 175 100 175 59 141 25 100 25 59 25 25 59 25 100'
+	       );
+	     });
+
+	     it('rounding errors', function () {
+	       // Coverage
+	       //
+	       // Due to rounding errors, with these exact arguments radicant
+	       // will be -9.974659986866641e-17, causing Math.sqrt() of that to be NaN
+	       //
+	       assert.equal(
+	         svgpath('M-0.5 0 A 0.09188163040671497 0.011583783896639943 0 0 1 0 0.5').unarc().round(5).toString(),
+	         'M-0.5 0C0.59517-0.01741 1.59491 0.08041 1.73298 0.21848 1.87105 0.35655 1.09517 0.48259 0 0.5'
+	       );
+	     });
+
+	     it('rounding errors #2', function () {
+	       // Coverage
+	       //
+	       // Due to rounding errors this will compute Math.acos(-1.0000000000000002)
+	       // and fail when calculating vector between angles
+	       //
+	       assert.equal(
+	         svgpath('M-0.07467194809578359 -0.3862391309812665' +
+	             'A1.2618792965076864 0.2013618852943182 90 0 1 -0.7558937461581081 -0.8010219619609416')
+	           .unarc().round(5).toString(),
+
+	         'M-0.07467-0.38624C-0.09295 0.79262-0.26026 1.65542-0.44838 1.54088' +
+	         '-0.63649 1.42634-0.77417 0.37784-0.75589-0.80102'
+	       );
+	     });
+
+	     it("we're already there", function () {
+	       // Asked to draw a curve between a point and itself. According to spec,
+	       // nothing shall be drawn in this case.
+	       //
+	       assert.equal(
+	         svgpath('M100 100A123 456 90 0 1 100 100').unarc().round(0).toString(),
+	         'M100 100L100 100'
+	       );
+
+	       assert.equal(
+	         svgpath('M100 100a123 456 90 0 1 0 0').unarc().round(0).toString(),
+	         'M100 100l0 0'
+	       );
+	     });
+
+	     it('radii are zero', function () {
+	       // both rx and ry are zero
+	       assert.equal(
+	         svgpath('M100 100A0 0 0 0 1 110 110').unarc().round(0).toString(),
+	         'M100 100L110 110'
+	       );
+
+	       // rx is zero
+	       assert.equal(
+	         svgpath('M100 100A0 100 0 0 1 110 110').unarc().round(0).toString(),
+	         'M100 100L110 110'
+	       );
+	     });
+	   });
+
+	*/
+}
+
 func TestArcTransformEdgeCases(t *testing.T) {
 
 	/*

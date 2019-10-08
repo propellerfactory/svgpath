@@ -6,6 +6,8 @@ import (
 	"math"
 	"regexp"
 	"strings"
+
+	"github.com/propellerfactory/cubic2quad"
 )
 
 // SVG Path transformations library
@@ -37,6 +39,10 @@ func NewSvgPath(path string) (*SvgPath, error) {
 		// Transforms stack for lazy evaluation
 		stack: []*Matrix{},
 	}, nil
+}
+
+func (sp *SvgPath) Segments() [][]interface{} {
+	return sp.segments
 }
 
 func (sp *SvgPath) matrix(m *Matrix) {
@@ -688,5 +694,59 @@ func (sp *SvgPath) Unshort() {
 			}
 		}
 		return nil
+	}, false)
+}
+
+// Converts cubic bézier curves to quadratic bézier curves
+//  NOTE: does not process "short" cubic bézier curves
+//
+func (sp *SvgPath) Uncubic() {
+	sp.iterate(func(s []interface{}, index int, x float64, y float64) [][]interface{} {
+		result := [][]interface{}{}
+		name := s[0].(string)
+
+		// Skip anything except cubics
+		if name != "C" && name != "c" {
+			return nil
+		}
+
+		var x1, y1, x2, y2, ex, ey float64
+		if name == "c" {
+			// convert relative cubic coordinates to absolute
+			x1 = x + s[1].(float64)
+			y1 = y + s[2].(float64)
+			x2 = x1 + s[3].(float64)
+			y2 = y1 + s[4].(float64)
+			ex = x2 + s[5].(float64)
+			ey = y2 + s[6].(float64)
+		} else {
+			x1 = s[1].(float64)
+			y1 = s[2].(float64)
+			x2 = s[3].(float64)
+			y2 = s[4].(float64)
+			ex = s[5].(float64)
+			ey = s[6].(float64)
+		}
+
+		quad := cubic2quad.CubicToQuad(x, y, x1, y1, x2, y2, ex, ey, 0.0001)
+		// Degenerated cubics can be ignored by renderer, but should not be dropped
+		// to avoid collisions with `S A S` and so on. Replace with empty line.
+		if len(quad) == 0 {
+			if s[0].(string) == "c" {
+				return [][]interface{}{[]interface{}{"l", s[5], s[6]}}
+			} else {
+				return [][]interface{}{[]interface{}{"L", s[5], s[6]}}
+			}
+		}
+
+		for i := 0; i < len(quad); i += 6 {
+			result = append(result, []interface{}{"Q",
+				quad[i+0], quad[i+1],
+				quad[i+2], quad[i+3],
+				quad[i+4], quad[i+5],
+			})
+		}
+
+		return result
 	}, false)
 }
