@@ -12,6 +12,8 @@ github.com/propellerfactory/cubic2quad v0.0.0-20191008175813-6dd6b3c18e15 h1:5tp
 github.com/propellerfactory/cubic2quad v0.0.0-20191008175813-6dd6b3c18e15/go.mod h1:aQ8nnRhtlKSCexA35X1UW1nyYKovzGaWZsaX4eKZE2s=
 github.com/propellerfactory/cubic2quad v0.0.0-20191008180824-6b4326b42594 h1:xR0Y2ygwqjFVjkmJcrEsVW7uJGfIojlc8M1B/gqA6i8=
 github.com/propellerfactory/cubic2quad v0.0.0-20191008180824-6b4326b42594/go.mod h1:aQ8nnRhtlKSCexA35X1UW1nyYKovzGaWZsaX4eKZE2s=
+github.com/propellerfactory/cubic2quad v0.0.0-20191009193713-f0bc352f4319 h1:miOdFmt/dnVqH2NhLxMbTRs6aPVI2Y5DtqCzpSDHCMA=
+github.com/propellerfactory/cubic2quad v0.0.0-20191009193713-f0bc352f4319/go.mod h1:aQ8nnRhtlKSCexA35X1UW1nyYKovzGaWZsaX4eKZE2s=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=

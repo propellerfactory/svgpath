@@ -582,7 +582,6 @@ func (sp *SvgPath) Unarc() {
 		if len(new_segments) == 0 {
 			if s[0].(string) == "a" {
 				return [][]interface{}{[]interface{}{"l", s[6], s[7]}}
-
 			} else {
 				return [][]interface{}{[]interface{}{"L", s[6], s[7]}}
 			}
@@ -715,10 +714,10 @@ func (sp *SvgPath) Uncubic() {
 			// convert relative cubic coordinates to absolute
 			x1 = x + s[1].(float64)
 			y1 = y + s[2].(float64)
-			x2 = x1 + s[3].(float64)
-			y2 = y1 + s[4].(float64)
-			ex = x2 + s[5].(float64)
-			ey = y2 + s[6].(float64)
+			x2 = x + s[3].(float64)
+			y2 = y + s[4].(float64)
+			ex = x + s[5].(float64)
+			ey = y + s[6].(float64)
 		} else {
 			x1 = s[1].(float64)
 			y1 = s[2].(float64)
@@ -734,17 +733,29 @@ func (sp *SvgPath) Uncubic() {
 		if len(quad) == 0 {
 			if s[0].(string) == "c" {
 				return [][]interface{}{[]interface{}{"l", s[5], s[6]}}
-			} else {
-				return [][]interface{}{[]interface{}{"L", s[5], s[6]}}
 			}
+			return [][]interface{}{[]interface{}{"L", s[5], s[6]}}
+
 		}
 
-		for i := 0; i < len(quad); i += 6 {
-			result = append(result, []interface{}{"Q",
-				quad[i+0], quad[i+1],
-				quad[i+2], quad[i+3],
-				quad[i+4], quad[i+5],
-			})
+		if name == "c" {
+			lastX := x
+			lastY := y
+			for i := 2; i < len(quad); i += 4 {
+				result = append(result, []interface{}{"q",
+					quad[i+0] - lastX, quad[i+1] - lastY,
+					quad[i+2] - lastX, quad[i+3] - lastY,
+				})
+				lastX = quad[i+2]
+				lastY = quad[i+3]
+			}
+		} else {
+			for i := 2; i < len(quad); i += 4 {
+				result = append(result, []interface{}{"Q",
+					quad[i+0], quad[i+1],
+					quad[i+2], quad[i+3],
+				})
+			}
 		}
 
 		return result
