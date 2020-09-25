@@ -77,7 +77,7 @@ type State struct {
 	index        int
 	path         string
 	max          int
-	result       [][]interface{}
+	result       []*Segment
 	param        float64
 	err          error
 	segmentStart int
@@ -89,7 +89,7 @@ func NewState(path string) *State {
 		index:        0,
 		path:         path,
 		max:          utf8.RuneCountInString(path),
-		result:       [][]interface{}{},
+		result:       []*Segment{},
 		param:        0.0,
 		err:          nil,
 		segmentStart: 0,
@@ -234,7 +234,7 @@ func (s *State) FinalizeSegment() {
 	params := s.data
 
 	if cmdLC == "m" && len(params) > 2 {
-		s.result = append(s.result, []interface{}{cmd, params[0], params[1]})
+		s.result = append(s.result, &Segment{Command: cmd, Params: []float64{params[0], params[1]}})
 		params = params[2:]
 		cmdLC = "l"
 		if cmd == "m" {
@@ -245,16 +245,16 @@ func (s *State) FinalizeSegment() {
 	}
 
 	if cmdLC == "r" {
-		result := []interface{}{cmd}
+		result := &Segment{Command: cmd, Params: []float64{}}
 		for _, param := range params {
-			result = append(result, param)
+			result.Params = append(result.Params, param)
 		}
 		s.result = append(s.result, result)
 	} else {
 		for len(params) >= paramCounts[cmdLC] {
-			result := []interface{}{cmd}
+			result := &Segment{Command: cmd, Params: []float64{}}
 			for i := 0; i < paramCounts[cmdLC]; i++ {
-				result = append(result, params[i])
+				result.Params = append(result.Params, params[i])
 			}
 			params = params[paramCounts[cmdLC]:]
 			s.result = append(s.result, result)
@@ -334,7 +334,7 @@ func (s *State) ScanSegment() error {
  *   [ command, coord1, coord2, ... ]
  * ]
  */
-func PathParse(svgPath string) ([][]interface{}, error) {
+func PathParse(svgPath string) ([]*Segment, error) {
 	s := NewState(svgPath)
 	max := s.max
 
@@ -345,15 +345,15 @@ func PathParse(svgPath string) ([][]interface{}, error) {
 	}
 
 	if s.err != nil {
-		s.result = [][]interface{}{}
+		s.result = []*Segment{}
 
 	} else if len(s.result) > 0 {
 
-		if !(s.result[0][0] == "m" || s.result[0][0] == "M") {
+		if !(s.result[0].Command == "m" || s.result[0].Command == "M") {
 			s.err = errors.Errorf("SvgPath: string should start with `M` or `m`")
-			s.result = [][]interface{}{}
+			s.result = []*Segment{}
 		} else {
-			s.result[0][0] = "M"
+			s.result[0].Command = "M"
 		}
 	}
 

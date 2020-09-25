@@ -162,7 +162,7 @@ func TestTransformMisc(t *testing.T) {
 
 	// Emulate first 'm'.
 	sp, err = NewSvgPath("m70 70 70 70")
-	sp.segments[0][0] = "m"
+	sp.segments[0].Command = "m"
 
 	// By default parser force first 'm' to upper case
 	// and we don't fall into troubles.
